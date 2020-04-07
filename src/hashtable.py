@@ -68,10 +68,6 @@ class HashTable:
                 return
             keyValuePairs.next = LinkedPair(key, value)
             print(f"Added {key}, {value}, hash number {theHash}")
-            #if keyValuePair.key != key:
-            #    print("Warning: overwriting key")
-            #    pair.key = key
-            #pair.value = value
         else:
             self.storage[theHash] = LinkedPair(key, value)
             print(f"Added {key}, {value}, hash number {theHash}")
@@ -88,12 +84,19 @@ class HashTable:
         theHash = self._hash_mod(key)  # the hash represents location index of storage
         keyValuePairs = self.storage[theHash]
 
-
-
-        #if self.storage[self._hash_mod(key)]:
-        #    self.storage[self._hash_mod(key)] = None
-        #else:
-        #    print("Key not found")
+        if keyValuePairs is not None:
+            if keyValuePairs.key == key: # If key to remove is first in linkedpair
+                self.storage[theHash] = keyValuePairs.next
+                print(f"Deleted key {key}")
+            else:
+                while keyValuePairs.next is not None:
+                    if keyValuePairs.next.key == key:
+                        keyValuePairs.next = keyValuePairs.next.next
+                        print(f"Deleted key {key}")
+                        break
+                    keyValuePairs = keyValuePairs.next
+        else:
+            print(f"Key {key} not found")
 
     def retrieve(self, key):
         '''
@@ -125,7 +128,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        oldStorage = self.storage
+        self.capacity *= 2
+        self.storage = [None] * self.capacity
+        print('')
+        for keyValuePairs in oldStorage:
+            while keyValuePairs is not None:
+                self.insert(keyValuePairs.key, keyValuePairs.value)
+                keyValuePairs = keyValuePairs.next
 
 
 if __name__ == "__main__":
@@ -134,8 +144,6 @@ if __name__ == "__main__":
     ht.insert("line_1", "Tiny hash table")
     ht.insert("line_2", "Filled beyond capacity")
     ht.insert("line_3", "Linked list saves the day!")
-    ht.insert("line_1", "Big table")
-    ht.remove("line_3")
 
     print("")
 
@@ -143,7 +151,7 @@ if __name__ == "__main__":
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
-    '''
+
     # Test resizing
     old_capacity = len(ht.storage)
     ht.resize()
@@ -157,4 +165,3 @@ if __name__ == "__main__":
     print(ht.retrieve("line_3"))
 
     print("")
-    '''
