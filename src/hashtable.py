@@ -53,10 +53,28 @@ class HashTable:
 
         Fill this in.
         '''
-        if self.storage[self._hash_mod(key)]:
-            print("hash collision")
+        theHash = self._hash_mod(key)  # the hash represents location index of storage
+        keyValuePairs = self.storage[theHash]
+        if keyValuePairs is not None:
+            while keyValuePairs.next is not None:
+                if keyValuePairs.key == key:
+                    keyValuePairs.value = value
+                    print(f"Overwritten key {key} with {value}, hash number {theHash}")
+                    return
+                keyValuePairs = keyValuePairs.next
+            if keyValuePairs.key == key:
+                keyValuePairs.value = value
+                print(f"Overwritten key {key} with {value}, hash number {theHash}")
+                return
+            keyValuePairs.next = LinkedPair(key, value)
+            print(f"Added {key}, {value}, hash number {theHash}")
+            #if keyValuePair.key != key:
+            #    print("Warning: overwriting key")
+            #    pair.key = key
+            #pair.value = value
         else:
-            self.storage[self._hash_mod(key)] = value
+            self.storage[theHash] = LinkedPair(key, value)
+            print(f"Added {key}, {value}, hash number {theHash}")
 
     def remove(self, key):
         '''
@@ -66,10 +84,16 @@ class HashTable:
 
         Fill this in.
         '''
-        if self.storage[self._hash_mod(key)]:
-            self.storage[self._hash_mod(key)] = None
-        else:
-            print("Key not found")
+
+        theHash = self._hash_mod(key)  # the hash represents location index of storage
+        keyValuePairs = self.storage[theHash]
+
+
+
+        #if self.storage[self._hash_mod(key)]:
+        #    self.storage[self._hash_mod(key)] = None
+        #else:
+        #    print("Key not found")
 
     def retrieve(self, key):
         '''
@@ -79,7 +103,20 @@ class HashTable:
 
         Fill this in.
         '''
-        return self.storage[self._hash_mod(key)]
+        theHash = self._hash_mod(key)  # the hash represents location index of storage
+        keyValuePairs = self.storage[theHash]
+
+        if keyValuePairs is not None:
+            while keyValuePairs.next is not None:
+                if keyValuePairs.key == key:
+                    return keyValuePairs.value
+                keyValuePairs = keyValuePairs.next
+            if keyValuePairs.key == key:
+                return keyValuePairs.value
+            else:
+                return None
+        else:
+            return None
 
     def resize(self):
         '''
@@ -97,6 +134,8 @@ if __name__ == "__main__":
     ht.insert("line_1", "Tiny hash table")
     ht.insert("line_2", "Filled beyond capacity")
     ht.insert("line_3", "Linked list saves the day!")
+    ht.insert("line_1", "Big table")
+    ht.remove("line_3")
 
     print("")
 
@@ -104,7 +143,7 @@ if __name__ == "__main__":
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
-
+    '''
     # Test resizing
     old_capacity = len(ht.storage)
     ht.resize()
@@ -118,3 +157,4 @@ if __name__ == "__main__":
     print(ht.retrieve("line_3"))
 
     print("")
+    '''
